@@ -18,7 +18,15 @@ library(data.table)
 df_original <- fread('./compact.csv')
 str(df_original)   ### check each column data type
 df <- fread('./compact.csv')
+
+###dealing integer64 column
+df$total_tests<-df$total_tests/1
+df$total_boosters<-df$total_boosters/1
+df$population<-df$population/1
 df[is.na(df)] <- "NULL"
+str(df)   ### check each column data type
+
+
 fwrite(df,'./compact_covert.csv')
 ```
 
