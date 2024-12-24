@@ -44,6 +44,25 @@ GROUP BY continent,country,population) as tmp
 GROUP BY continent
 ORDER BY deaths_rate_continent DESC
 
+-- from global perspective
+SELECT STR_TO_DATE(date, '%m/%d/%y') AS formatted_date,sum(new_cases) as total_new_cases,sum(new_deaths) as total_new_deaths, sum(new_deaths)/sum(new_cases)*100 as deathpercentage
+FROM COVID_data.compact_covert
+WHERE continent not like ''
+GROUP BY formatted_date
+ORDER BY formatted_date
+
+-- look at total vaccination numbern and percentage
+WITH acc_vac_tb as (SELECT continent,country,STR_TO_DATE(date, '%m/%d/%y') AS formatted_date,new_vaccinations,sum(new_vaccinations) over(partition by country order by country,STR_TO_DATE(date, '%m/%d/%y')) as acc_vac, population 
+FROM COVID_data.compact_covert
+WHERE continent not like ''
+order by continent,country,formatted_date)
+
+SELECT *,acc_vac/population*100 as vac_percentage
+FROM acc_vac_tb
+WHERE country='Canada'
+
+
+
 
 
 
