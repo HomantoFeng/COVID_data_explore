@@ -1,22 +1,27 @@
-SELECT country,date,total_cases,new_cases,total_deaths,population
-FROM COVID_data.compact_covert
-
 -- death likehood by detected cases
-SELECT country,date,total_cases,total_deaths,total_deaths/total_cases*100 as death_rate
+SELECT country,STR_TO_DATE(date, '%m/%d/%y') AS formatted_date,total_cases,total_deaths,total_deaths/total_cases*100 as death_rate
 FROM COVID_data.compact_covert
 WHERE continent not like '' and country = 'United States'
+ORDER BY formatted_date
+
+-- global death rate
+SELECT sum(new_cases) as total_cases,sum(new_deaths) as total_death,sum(new_deaths)/sum(new_cases)*100 as death_rate
+FROM COVID_data.compact_covert
+WHERE continent not like '' 
 
 -- Detected rates by country population
-SELECT country,date,total_cases,population,total_cases/population*100 as Detect_rate
+SELECT country,STR_TO_DATE(date, '%m/%d/%y') AS formatted_date,total_cases,population,total_cases/population*100 as Detect_rate
 FROM COVID_data.compact_covert
-WHERE continent not like '' and country = 'United States'
+WHERE continent not like '' -- and country = 'United States'
+order by formatted_date
 
 -- country with highes infection rate by population
 SELECT country,population,max(total_cases) as max_cases,max(total_cases/population)*100 as Max_detect_rate
 FROM COVID_data.compact_covert
 WHERE continent not like ''
 GROUP BY country,population
-ORDER BY Max_detect_rate desc
+ORDER BY Max_detect_rate DESC
+
 
 -- country with highes death rate compared to population
 SELECT country,max(total_deaths) as max_deaths
@@ -25,7 +30,7 @@ WHERE continent not like ''
 GROUP BY country
 ORDER BY max_deaths desc
 
--- highes death rate compared to population by continent
+-- total death count by continent
 SELECT continent,sum(max_deaths) as total_deaths
 FROM
 (SELECT continent,country,max(total_deaths) as max_deaths
@@ -33,6 +38,7 @@ FROM COVID_data.compact_covert
 WHERE continent not like ''
 GROUP BY continent,country) as tmp
 GROUP BY continent
+order by total_deaths desc
 
 -- continents with the highest death count per population
 SELECT continent,sum(max_deaths)/sum(population)*100 as deaths_rate_continent
