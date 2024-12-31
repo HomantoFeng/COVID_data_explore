@@ -1,3 +1,5 @@
+-- COVID Cases Explore
+
 -- death likehood by detected cases
 SELECT country,STR_TO_DATE(date, '%m/%d/%y') AS formatted_date,total_cases,total_deaths,total_deaths/total_cases*100 as death_rate
 FROM COVID_data.compact_covert
@@ -13,7 +15,7 @@ WHERE continent not like ''
 SELECT country,STR_TO_DATE(date, '%m/%d/%y') AS formatted_date,total_cases,population,total_cases/population*100 as Detect_rate
 FROM COVID_data.compact_covert
 WHERE continent not like '' -- and country = 'United States'
-order by formatted_date
+order by country,formatted_date
 
 -- country with highes infection rate by population
 SELECT country,population,max(total_cases) as max_cases,max(total_cases/population)*100 as Max_detect_rate
